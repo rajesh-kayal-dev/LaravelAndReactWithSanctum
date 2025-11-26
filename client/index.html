@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React + Laravel</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+  <script>
+    $(document).ready(function () {
+      // Activate tooltip
+      $('[data-toggle="tooltip"]').tooltip();
+
+      // Select/Deselect checkboxes
+      var checkbox = $('table tbody input[type="checkbox"]');
+      $("#selectAll").click(function () {
+        if (this.checked) {
+          checkbox.each(function () {
+            this.checked = true;
+          });
+        } else {
+          checkbox.each(function () {
+            this.checked = false;
+          });
+        }
+      });
+      checkbox.click(function () {
+        if (!this.checked) {
+          $("#selectAll").prop("checked", false);
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
