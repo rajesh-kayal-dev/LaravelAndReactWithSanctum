@@ -1,13 +1,34 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useParams } from 'react-router'
 import api from '../api/api'
 
-const CreateNewPost = () => {
+const EditPost = () => {
 
     const navigate = useNavigate();
 
+    const { id } = useParams();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const[errors, setErrors] = useState();
+    const [errors, setErrors] = useState();
+
+    useEffect(() => {
+        getPostById();
+    }, []);
+
+    const getPostById = async () => {
+        try {
+            const response = await api.get(`/edit-post/${id}`);
+            setFormData({
+                title: response.data.post.title || '',
+                author: response.data.post.author || '',
+                category: response.data.post.category || '',
+                status: response.data.post.status || '',
+                content: response.data.post.content || '',
+                id: response.data.post.id || ''
+            });
+        } catch (error) {
+            console.error("Error fetching post details:", error);
+        }
+    }
 
     const [formData, setFormData] = useState({
         title: '',
@@ -23,14 +44,14 @@ const CreateNewPost = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await api.post('/create-new-post', formData);
+            await api.post(`/update-post/${id}`, formData);
             navigate('/');
-           
-            
+
+
         } catch (error) {
             if (error.response.status === 422) {
                 setErrors(error.response.data.message);
-            }else {
+            } else {
                 setErrors("An unexpected error occurred. Please try again later.");
             }
         } finally {
@@ -39,7 +60,7 @@ const CreateNewPost = () => {
     }
 
     const handleChange = (e) => {
-      const { name, value } = e.target;
+        const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value
@@ -50,16 +71,16 @@ const CreateNewPost = () => {
         <div className="container mt-5">
             <div className="row">
                 <div className="col-md-12">
-                    <h1 className="mb-4">Create New Post</h1>
+                    <h1 className="mb-4">Edit New Post</h1>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb">
                             <li className="breadcrumb-item"><a href="/">Home</a></li>
-                            <li className="breadcrumb-item active">Create Post</li>
+                            <li className="breadcrumb-item active">Edit Post</li>
                         </ol>
                     </nav>
 
-                    {errors && 
-                    <div className="alert alert-danger" role="alert">{errors}</div>
+                    {errors &&
+                        <div className="alert alert-danger" role="alert">{errors}</div>
                     }
                     <div className="card">
                         <div className="card-body">
@@ -109,8 +130,8 @@ const CreateNewPost = () => {
                                             Creating...
                                         </button>
                                         :
-                                        <button type="submit" className="btn btn-primary">Create Post</button>
-                                        }
+                                        <button type="submit" className="btn btn-primary">Update Post</button>
+                                    }
                                 </div>
                             </form>
                         </div>
@@ -120,5 +141,4 @@ const CreateNewPost = () => {
         </div>
     )
 }
-
-export default CreateNewPost
+export default EditPost
